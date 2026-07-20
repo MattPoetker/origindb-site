@@ -183,11 +183,14 @@ section { max-width: var(--maxw); margin: 0 auto; padding: clamp(56px, 8vw, 104p
 .fgrid .card code { color: var(--warning); }
 
 /* ============================================================ DEMOS */
-.dgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s4); }
-.dcard { position: relative; overflow: hidden; }
+.dgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--s4); }
+.dcard { position: relative; overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
 .dcard::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--line); transition: background .18s; }
 .dcard:hover { border-color: var(--primary); }
 .dcard:hover::before { background: var(--primary); }
+.dc-play { margin-top: auto; padding-top: var(--s4); display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: -.01em; }
+.dc-play svg { width: 14px; height: 14px; transition: transform .18s; }
+.dcard:hover .dc-play svg { transform: translateX(3px); }
 .dc-top { display: flex; align-items: center; gap: var(--s3); margin-bottom: var(--s4); }
 .dc-idx { font-size: 20px; font-weight: 800; color: var(--tx-3); letter-spacing: -.02em; }
 .dcard h3 { font-size: 24px; font-weight: 800; color: var(--tx-1); margin-bottom: var(--s3); letter-spacing: -.01em; }

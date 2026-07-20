@@ -144,26 +144,37 @@ export default function Home() {
         </div>
 
         <div className="dgrid">
-          <article className="card dcard reveal">
+          <a className="card dcard reveal" href="https://db.origindb.org" rel="noopener">
             <div className="dc-top"><span className="dc-idx">01</span><span className="badge">COLLAB</span></div>
             <h3>NIGHTBOARD</h3>
             <p>A shared realtime wall — live cursors, pinned notes, an activity tape. Every twitch travels through a reducer, a commit, the WAL, and a filtered changefeed before it lands.</p>
             <div className="dc-tags"><span className="badge">live cursors</span><span className="badge">filtered subs</span></div>
-          </article>
+            <span className="dc-play">Open live board <Icon id="arrow" /></span>
+          </a>
 
-          <article className="card dcard reveal">
+          <a className="card dcard reveal" href="https://cubeio.origindb.org" rel="noopener">
             <div className="dc-top"><span className="dc-idx">02</span><span className="badge">GAME</span></div>
             <h3>cube.io</h3>
             <p>An agar-style arena whose authoritative tick <em>is</em> a WASM reducer. Server-authoritative rewards mean a hot-swap re-values the whole arena instantly.</p>
             <div className="dc-tags"><span className="badge">authoritative tick</span><span className="badge">hot-swap</span></div>
-          </article>
+            <span className="dc-play">Play cube.io <Icon id="arrow" /></span>
+          </a>
 
-          <article className="card dcard reveal">
+          <a className="card dcard reveal" href="https://marble.origindb.org" rel="noopener">
             <div className="dc-top"><span className="dc-idx">03</span><span className="badge">PHYSICS</span></div>
             <h3>Marble Clash</h3>
             <p>A 60&nbsp;Hz physics sumo whose whole simulation is a reducer, ticked natively across cores. Roll, ram, and shove rivals off the rim — hundreds of players per server.</p>
             <div className="dc-tags"><span className="badge">60 Hz native tick</span><span className="badge">multi-core</span></div>
-          </article>
+            <span className="dc-play">Play Marble Clash <Icon id="arrow" /></span>
+          </a>
+
+          <a className="card dcard reveal" href="https://territory.origindb.org" rel="noopener">
+            <div className="dc-top"><span className="dc-idx">04</span><span className="badge">STRATEGY</span></div>
+            <h3>Territories</h3>
+            <p>A persistent region-control RTS — thousands of tiles, region-sharded ticks, and area-of-interest subscriptions so each client streams only the map it can see.</p>
+            <div className="dc-tags"><span className="badge">region-sharded</span><span className="badge">AOI subs</span></div>
+            <span className="dc-play">Play Territories <Icon id="arrow" /></span>
+          </a>
         </div>
       </section>
 
