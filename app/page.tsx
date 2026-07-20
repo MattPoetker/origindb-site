@@ -153,8 +153,6 @@ ws.send(JSON.stringify({ type: <span class="c-st">"call_reducer"</span>,
             desc="An agar-style arena whose authoritative tick is a WASM reducer. A hot-swap re-values the whole arena instantly." cta="Play cube.io" />
           <DemoCard href="https://marble.origindb.org" idx="03" tag="PHYSICS" title="Marble Clash"
             desc="A 60 Hz physics sumo with lobbies + matchmaking — the whole match simulation is one reducer, ticked natively." cta="Play Marble Clash" />
-          <DemoCard href="https://territory.origindb.org" idx="04" tag="STRATEGY" title="Territories"
-            desc="A persistent region-control RTS — region-sharded ticks and area-of-interest subscriptions per client." cta="Play Territories" />
         </div>
       </section>
 
