@@ -3,7 +3,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import CodePanel from "@/components/CodePanel";
 
-const GITHUB = "https://github.com/origindb/origindb";
+const GITHUB = "https://github.com/MattPoetker/origindb";
 
 export const metadata: Metadata = {
   title: "Getting Started",
@@ -134,7 +134,7 @@ export default function GettingStarted() {
           <CodePanel
             file="shell"
             html={`<span class="c-cm"># build the engine → build/origindb_server + build/origindb_client</span>
-<span class="c-pr">$</span> git clone https://github.com/origindb/origindb.git &amp;&amp; cd origindb
+<span class="c-pr">$</span> git clone https://github.com/MattPoetker/origindb.git &amp;&amp; cd origindb
 <span class="c-pr">$</span> cmake -B build -DCMAKE_BUILD_TYPE=Release &amp;&amp; cmake --build build -j
 
 <span class="c-cm"># install the AssemblyScript SDK toolchain</span>
@@ -329,7 +329,7 @@ export default function GettingStarted() {
             the same shape.
           </p>
         </div>
-        <div className="fgrid">
+        <div className="dgrid">
           <article className="card reveal"><h3><Icon id="box" /> Module</h3>
             <p>Your backend, compiled to WebAssembly and deployed into the DB. Validated, sandboxed, hot-swappable.</p></article>
           <article className="card reveal"><h3><Icon id="terminal" /> Reducer</h3>

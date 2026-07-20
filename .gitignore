@@ -18,3 +18,8 @@ dist/
 
 # stashed original static site (kept locally for reference; not deployed)
 /_legacy
+
+# source image originals (optimized copies live in public/images)
+/images
+.playwright-mcp
+*.jpeg.orig
