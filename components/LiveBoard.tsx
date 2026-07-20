@@ -23,6 +23,7 @@ const WS = process.env.NEXT_PUBLIC_ORIGINDB_WS || "wss://db.origindb.org";
 const COLORS = ["#4da3ff", "#5ee6a8", "#ffd166", "#ff6b6b", "#c792ff", "#ff9f6b", "#4ee1e1", "#f078c8"];
 const CURSOR_STALE_MS = 9000;
 const MOVE_HZ = 15;
+const MODULE = "collab"; // the reducer module this board calls
 
 type Cursor = { user: string; color: string; x: number; y: number; msg: string; ts: number };
 type Note = { id: string; user: string; color: string; x: number; y: number; text: string };
@@ -38,6 +39,8 @@ function ident() {
 
 export default function LiveBoard() {
   const boardRef = useRef<HTMLDivElement>(null);
+  const wsRef = useRef<WebSocket | null>(null);
+  const wsWrites = useRef(false); // set true once the backend acks a call_reducer probe
   const cursors = useRef<Map<string, Cursor>>(new Map());
   const notes = useRef<Map<string, Note>>(new Map());
   const me = useRef(ident());
@@ -47,13 +50,22 @@ export default function LiveBoard() {
   const [connected, setConnected] = useState<boolean | null>(null);
   const [composer, setComposer] = useState<{ x: number; y: number } | null>(null);
 
-  // ---- call a reducer through the bridge ----
-  const call = (reducer: string, args: (string | number)[]) =>
+  // ---- call a reducer ----
+  // Preferred path: send over the SAME websocket we read from — OriginDB's
+  // changefeed socket is bidirectional (a `call_reducer` message → ExecuteReducer),
+  // so writes need no HTTP request, no headers, no CORS preflight. Falls back to
+  // the HTTP bridge only when the socket isn't open yet (or an older backend).
+  const call = (reducer: string, args: (string | number)[]) => {
+    const ws = wsRef.current;
+    if (wsWrites.current && ws && ws.readyState === WebSocket.OPEN) {
+      try { ws.send(JSON.stringify({ type: "call_reducer", module: MODULE, reducer, args })); return; } catch {}
+    }
     fetch(`${API}/api/call`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ reducer, args }),
     }).catch(() => {});
+  };
 
   // ---- websocket subscription (reads) ----
   useEffect(() => {
@@ -79,15 +91,27 @@ export default function LiveBoard() {
 
     const connect = () => {
       try { ws = new WebSocket(WS); } catch { setConnected(false); return; }
+      wsRef.current = ws;
       ws.onopen = () => {
         setConnected(true);
         ws!.send(JSON.stringify({ type: "sql_subscribe", sql: "SELECT * FROM cursors" }));
         ws!.send(JSON.stringify({ type: "sql_subscribe", sql: "SELECT * FROM notes" }));
+        // Probe for bidirectional support: a backend that answers call_result
+        // (new) lets us write over the socket; an old backend replies with an
+        // error (or nothing) and we keep using the HTTP bridge for writes.
+        wsWrites.current = false;
+        ws!.send(JSON.stringify({ type: "call_reducer", id: "__probe", module: MODULE, reducer: "moveCursor",
+          args: [me.current.user, me.current.color, 0.5, 0.5, ""] }));
       };
-      ws.onclose = () => { setConnected(false); if (!closed) retry = setTimeout(connect, 1500); };
+      ws.onclose = () => { setConnected(false); wsRef.current = null; if (!closed) retry = setTimeout(connect, 1500); };
       ws.onerror = () => { try { ws?.close(); } catch {} };
       ws.onmessage = (e) => {
         let m: any; try { m = JSON.parse(e.data); } catch { return; }
+        // ws-write support is proven only by a successful probe ack; until then
+        // writes default to the HTTP bridge, so an old backend (which replies
+        // with an error, or nothing) simply never flips this on.
+        if (m.type === "call_result") { if (m.id === "__probe") wsWrites.current = m.success === true; return; }
+        if (m.type === "error") return;
         if (m.type === "initial_state") {
           const table = /FROM\s+(\w+)/i.exec(m.sql || "")?.[1] || "";
           for (const row of m.rows || []) apply(table, row.key, row.data || {});
