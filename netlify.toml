@@ -4,3 +4,11 @@
 
 [build.environment]
   NODE_VERSION = "20"
+
+# Serve the installer as plain text so `curl … | sh` and in-browser viewing
+# both get the raw script (not a forced download).
+[[headers]]
+  for = "/install.sh"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+    Cache-Control = "public, max-age=300"

@@ -114,8 +114,9 @@ export default function GettingStarted() {
           <span className="chip"><Icon id="filter" /> a live browser client</span>
         </div>
         <p className="tut-note reveal d4">
-          Prerequisites: a C++17 toolchain + CMake to build the engine, and Node 18+ for the SDK
-          toolchain and the demo&apos;s web page. Everything runs on your machine — no cloud account.
+          Prerequisites: <strong>none to run OriginDB</strong> — the install script drops in a prebuilt
+          binary. You&apos;ll want Node 18+ for the SDK toolchain that compiles your module and serves the
+          demo page. Everything runs on your machine — no cloud account.
         </p>
       </section>
 
@@ -125,20 +126,21 @@ export default function GettingStarted() {
         <section className="step reveal">
           <div className="step-num">1</div>
           <span className="step-tag">Install</span>
-          <h2 className="step-h">Get OriginDB and the SDK</h2>
+          <h2 className="step-h">Install OriginDB</h2>
           <p>
-            Clone the repo. Build the engine — one binary with storage, WAL, changefeed, SQL, and the
-            wasmtime host — plus the <code>origindb</code> CLI. Then install the AssemblyScript
-            toolchain that compiles your module to WASM.
+            One command. The script auto-detects your platform (macOS &amp; Linux, Intel or ARM),
+            downloads the matching <strong>prebuilt binary</strong> from GitHub, verifies its checksum,
+            and puts the <code>origindb</code> CLI on your PATH — engine, WAL, changefeed, SQL, and the
+            wasmtime host, all in one binary. <strong>No compiler, no build step.</strong>
           </p>
           <CodePanel
             file="shell"
-            html={`<span class="c-cm"># build the engine → build/origindb (one CLI: serve, deploy, call, exec…)</span>
-<span class="c-pr">$</span> git clone https://github.com/MattPoetker/origindb.git &amp;&amp; cd origindb
-<span class="c-pr">$</span> cmake -B build -DCMAKE_BUILD_TYPE=Release &amp;&amp; cmake --build build -j
+            html={`<span class="c-cm"># install the origindb CLI + server (prebuilt, checksum-verified)</span>
+<span class="c-pr">$</span> curl -fsSL https://origindb.org/install.sh | sh
+<span class="c-ok">✓ Installed OriginDB — run 'origindb --help'</span>
 
-<span class="c-cm"># install the AssemblyScript SDK toolchain</span>
-<span class="c-pr">$</span> cd sdk/typescript &amp;&amp; npm install &amp;&amp; cd ../..`}
+<span class="c-cm"># then grab the AssemblyScript SDK toolchain that compiles your module to WASM</span>
+<span class="c-pr">$</span> git clone https://github.com/MattPoetker/origindb.git &amp;&amp; cd origindb/sdk/typescript &amp;&amp; npm install`}
           />
         </section>
 
@@ -205,7 +207,7 @@ export default function GettingStarted() {
           </p>
           <CodePanel
             file="shell"
-            html={`<span class="c-pr">$</span> ./build/origindb serve -d ./board_data -p <span class="c-nm">8787</span> -g <span class="c-nm">50051</span> --no-auth
+            html={`<span class="c-pr">$</span> origindb serve -d ./board_data -p <span class="c-nm">8787</span> -g <span class="c-nm">50051</span> --no-auth
 <span class="c-ok">✓ WebSocket ready on ws://localhost:8787</span>
 <span class="c-ok">✓ gRPC ready on localhost:50051</span>`}
           />
@@ -231,14 +233,14 @@ export default function GettingStarted() {
           </p>
           <CodePanel
             file="shell"
-            html={`<span class="c-pr">$</span> ./build/origindb deploy board sdk/typescript/build/board.wasm 1.0.0
+            html={`<span class="c-pr">$</span> origindb deploy board sdk/typescript/build/board.wasm 1.0.0
 <span class="c-ok">✓ Deployed module 'board' (30213 bytes) — validated, sandboxed</span>
 
 <span class="c-cm"># addNote(user, text, x, y, color)</span>
-<span class="c-pr">$</span> ./build/origindb call board addNote <span class="c-st">'["Ada","hello!",0.3,0.4,"#4da3ff"]'</span>
+<span class="c-pr">$</span> origindb call board addNote <span class="c-st">'["Ada","hello!",0.3,0.4,"#4da3ff"]'</span>
 <span class="c-ok">←</span> {"id":"1871105572944740356"}
 
-<span class="c-pr">$</span> ./build/origindb exec <span class="c-st">"SELECT * FROM notes"</span>
+<span class="c-pr">$</span> origindb exec <span class="c-st">"SELECT * FROM notes"</span>
 <span class="c-ok">→</span> id=1871105572944740356  user="Ada"  text="hello!"  x=0.3  y=0.4`}
           />
           <div className="callout">
